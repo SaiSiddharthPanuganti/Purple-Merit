@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  server:
+    build: ./server
+    container_name: purplemerit-api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo:27017/purplemerit
+      - JWT_ACCESS_SECRET=purplemerit_access_secret_docker
+      - JWT_REFRESH_SECRET=purplemerit_refresh_secret_docker
+      - JWT_ACCESS_EXPIRY=15m
+      - JWT_REFRESH_EXPIRY=7d
+      - CLIENT_URL=http://localhost
+      - NODE_ENV=production
+    depends_on:
+      - mongo
+
+  client:
+    build: ./client
+    container_name: purplemerit-web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+
+  mongo:
+    image: mongo:7
+    container_name: purplemerit-db
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
