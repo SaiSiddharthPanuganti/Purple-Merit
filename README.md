@@ -51,6 +51,11 @@ Demo users are created only when `SEED_DEMO_DATA=true` in backend `.env`.
 | Admin | `SEED_ADMIN_EMAIL` (default: `admin@purplemerit.com`) | `SEED_ADMIN_PASSWORD` |
 | Sample users | predefined demo emails | `SEED_SAMPLE_PASSWORD` (or `SEED_ADMIN_PASSWORD` if empty) |
 
+To show credentials directly on the hosted login page (useful for assessments), set frontend env vars:
+
+- `VITE_DEMO_EMAIL=<same as SEED_ADMIN_EMAIL>`
+- `VITE_DEMO_PASSWORD=<same as SEED_ADMIN_PASSWORD>`
+
 ## ⚙️ Setup
 
 ### Prerequisites
@@ -115,6 +120,8 @@ Optional demo seed vars:
 Set:
 
 - `VITE_API_URL=https://<your-render-domain>/api`
+- `VITE_DEMO_EMAIL=<demo-admin-email>` (optional)
+- `VITE_DEMO_PASSWORD=<demo-admin-password>` (optional)
 
 ## 📡 API Endpoints
 

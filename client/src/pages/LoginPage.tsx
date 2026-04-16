@@ -11,6 +11,9 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const demoEmail = import.meta.env.VITE_DEMO_EMAIL?.trim();
+  const demoPassword = import.meta.env.VITE_DEMO_PASSWORD?.trim();
+  const hasDemoCredentials = Boolean(demoEmail && demoPassword);
 
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
 
@@ -32,6 +35,15 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleUseDemoCredentials = () => {
+    if (!hasDemoCredentials) {
+      return;
+    }
+
+    setEmail(demoEmail!);
+    setPassword(demoPassword!);
   };
 
   return (
@@ -146,13 +158,22 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-8 p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
-            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Demo Credentials (Optional)</p>
-            <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-              <p><span className="text-gray-400 dark:text-gray-500">Admin email:</span> set by SEED_ADMIN_EMAIL</p>
-              <p><span className="text-gray-400 dark:text-gray-500">Password:</span> set by SEED_ADMIN_PASSWORD</p>
+          {hasDemoCredentials && (
+            <div className="mt-8 p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Demo Credentials</p>
+              <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
+                <p><span className="text-gray-400 dark:text-gray-500">Email:</span> {demoEmail}</p>
+                <p><span className="text-gray-400 dark:text-gray-500">Password:</span> {demoPassword}</p>
+              </div>
+              <button
+                type="button"
+                onClick={handleUseDemoCredentials}
+                className="mt-3 text-xs font-medium text-brand-600 dark:text-brand-300 hover:underline"
+              >
+                Use demo credentials
+              </button>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
