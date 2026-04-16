@@ -1,15 +1,18 @@
 const User = require('../models/User');
 const AppError = require('../utils/AppError');
 
+const escapeRegex = (value = '') => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const getUsers = async (query) => {
   const { page, limit, search, role, status, sortBy, sortOrder } = query;
   const filter = {};
 
-  if (search) {
+  const safeSearch = search ? escapeRegex(search.trim()).slice(0, 80) : '';
+  if (safeSearch) {
     filter.$or = [
-      { firstName: { $regex: search, $options: 'i' } },
-      { lastName: { $regex: search, $options: 'i' } },
-      { email: { $regex: search, $options: 'i' } },
+      { firstName: { $regex: safeSearch, $options: 'i' } },
+      { lastName: { $regex: safeSearch, $options: 'i' } },
+      { email: { $regex: safeSearch, $options: 'i' } },
     ];
   }
 

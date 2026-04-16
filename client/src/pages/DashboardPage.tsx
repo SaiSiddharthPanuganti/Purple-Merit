@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, UserCheck, UserX, ShieldCheck, TrendingUp, ArrowRight } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { userApi } from '../api/userApi';
 import type { UserStats, User } from '../types';
@@ -28,7 +29,7 @@ export default function DashboardPage() {
         setStats(statsRes.data);
         setRecentUsers(usersRes.data);
       } catch {
-        // handled silently
+        toast.error('Failed to load dashboard data');
       } finally {
         setIsLoading(false);
       }

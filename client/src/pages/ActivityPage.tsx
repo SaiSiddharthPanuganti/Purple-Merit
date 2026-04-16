@@ -10,6 +10,7 @@ import {
   UserCircle,
 } from 'lucide-react';
 import { activityApi, type ActivityLog } from '../api/activityApi';
+import toast from 'react-hot-toast';
 import type { PaginationInfo } from '../types';
 import Card from '../components/ui/Card';
 import Pagination from '../components/ui/Pagination';
@@ -44,7 +45,7 @@ export default function ActivityPage() {
       setLogs(res.data);
       if (res.pagination) setPagination(res.pagination);
     } catch {
-      // silently handled
+      toast.error('Failed to load activity logs');
     } finally {
       setIsLoading(false);
     }

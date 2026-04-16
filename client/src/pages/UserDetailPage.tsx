@@ -9,6 +9,7 @@ import {
   UserCircle,
   Edit3,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { userApi } from '../api/userApi';
 import type { User } from '../types';
 import Card from '../components/ui/Card';
@@ -37,6 +38,7 @@ export default function UserDetailPage() {
         const res = await userApi.getUser(id);
         setUser(res.data);
       } catch {
+        toast.error('Failed to load user details');
         navigate('/users');
       } finally {
         setIsLoading(false);

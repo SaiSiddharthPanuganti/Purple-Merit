@@ -1,6 +1,17 @@
 const User = require('../models/User');
+const crypto = require('crypto');
 const AppError = require('../utils/AppError');
 const { generateAccessToken, generateRefreshToken } = require('../utils/token');
+
+const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
+
+const compareTokenHash = (storedHash, token) => {
+  if (!storedHash) return false;
+  const incomingHash = hashToken(token);
+  const stored = Buffer.from(storedHash, 'hex');
+  const incoming = Buffer.from(incomingHash, 'hex');
+  return stored.length === incoming.length && crypto.timingSafeEqual(stored, incoming);
+};
 
 const login = async (email, password) => {
   const user = await User.findOne({ email }).select('+password');
@@ -21,8 +32,8 @@ const login = async (email, password) => {
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
-  // Save refresh token and update last login
-  user.refreshToken = refreshToken;
+  // Save refresh token hash and update last login
+  user.refreshTokenHash = hashToken(refreshToken);
   user.lastLogin = new Date();
   await user.save({ validateBeforeSave: false });
 
@@ -33,9 +44,9 @@ const refreshAccessToken = async (refreshToken) => {
   const { verifyRefreshToken } = require('../utils/token');
 
   const decoded = verifyRefreshToken(refreshToken);
-  const user = await User.findById(decoded.id).select('+refreshToken');
+  const user = await User.findById(decoded.id).select('+refreshTokenHash');
 
-  if (!user || user.refreshToken !== refreshToken) {
+  if (!user || !compareTokenHash(user.refreshTokenHash, refreshToken)) {
     throw new AppError('Invalid refresh token.', 401);
   }
 
@@ -46,14 +57,14 @@ const refreshAccessToken = async (refreshToken) => {
   const newAccessToken = generateAccessToken(user);
   const newRefreshToken = generateRefreshToken(user);
 
-  user.refreshToken = newRefreshToken;
+  user.refreshTokenHash = hashToken(newRefreshToken);
   await user.save({ validateBeforeSave: false });
 
   return { user, accessToken: newAccessToken, refreshToken: newRefreshToken };
 };
 
 const logout = async (userId) => {
-  await User.findByIdAndUpdate(userId, { refreshToken: null });
+  await User.findByIdAndUpdate(userId, { refreshTokenHash: null });
 };
 
 module.exports = { login, refreshAccessToken, logout };

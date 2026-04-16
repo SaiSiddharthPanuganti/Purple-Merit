@@ -6,7 +6,9 @@ const seedAdmin = require('./src/utils/seed');
 const startServer = async () => {
   try {
     await connectDB();
-    await seedAdmin();
+    if (env.SEED_DEMO_DATA) {
+      await seedAdmin();
+    }
 
     app.listen(env.PORT, () => {
       console.log(`🚀 PurpleMerit API running on port ${env.PORT} [${env.NODE_ENV}]`);

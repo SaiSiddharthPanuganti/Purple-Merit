@@ -18,17 +18,19 @@ const logActivity = async ({ user, action, targetUser = null, details = '', req 
 const getActivityLogs = async (query) => {
   const { page = 1, limit = 20, action = '', userId = '' } = query;
   const filter = {};
+  const pageNumber = Number(page);
+  const limitNumber = Number(limit);
 
   if (action) filter.action = action;
   if (userId) filter.user = userId;
 
-  const skip = (page - 1) * limit;
+  const skip = (pageNumber - 1) * limitNumber;
 
   const [logs, total] = await Promise.all([
     ActivityLog.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit)
+      .limit(limitNumber)
       .populate('user', 'firstName lastName email role')
       .populate('targetUser', 'firstName lastName email'),
     ActivityLog.countDocuments(filter),
@@ -37,10 +39,10 @@ const getActivityLogs = async (query) => {
   return {
     logs,
     pagination: {
-      page: Number(page),
-      limit: Number(limit),
+      page: pageNumber,
+      limit: limitNumber,
       total,
-      pages: Math.ceil(total / limit),
+      pages: Math.ceil(total / limitNumber),
     },
   };
 };

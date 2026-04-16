@@ -147,10 +147,10 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-8 p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
-            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Demo Credentials</p>
+            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Demo Credentials (Optional)</p>
             <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-              <p><span className="text-gray-400 dark:text-gray-500">Admin:</span> admin@purplemerit.com / admin</p>
-              <p><span className="text-gray-400 dark:text-gray-500">Manager:</span> sarah.johnson@purplemerit.com / password123</p>
+              <p><span className="text-gray-400 dark:text-gray-500">Admin email:</span> set by SEED_ADMIN_EMAIL</p>
+              <p><span className="text-gray-400 dark:text-gray-500">Password:</span> set by SEED_ADMIN_PASSWORD</p>
             </div>
           </div>
         </div>
