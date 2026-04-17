@@ -1,3 +1,19 @@
+const env = require('./env');
+
+const normalizeApiBaseUrl = (url) => {
+  const withoutTrailingSlash = url.replace(/\/+$/, '');
+  return withoutTrailingSlash.endsWith('/api')
+    ? withoutTrailingSlash
+    : `${withoutTrailingSlash}/api`;
+};
+
+const configuredApiBaseUrl = process.env.API_BASE_URL || process.env.RENDER_EXTERNAL_URL;
+const swaggerServerUrl = configuredApiBaseUrl
+  ? normalizeApiBaseUrl(configuredApiBaseUrl)
+  : env.NODE_ENV === 'production'
+    ? '/api'
+    : 'http://localhost:5000/api';
+
 const swaggerDocument = {
   openapi: '3.0.3',
   info: {
@@ -6,9 +22,7 @@ const swaggerDocument = {
     version: '1.0.0',
     contact: { name: 'PurpleMerit', email: 'admin@purplemerit.com' },
   },
-  servers: [
-    { url: 'http://localhost:5000/api', description: 'Development' },
-  ],
+  servers: [{ url: swaggerServerUrl, description: env.NODE_ENV === 'production' ? 'Production' : 'Development' }],
   tags: [
     { name: 'Auth', description: 'Authentication endpoints' },
     { name: 'Users', description: 'User management endpoints' },
