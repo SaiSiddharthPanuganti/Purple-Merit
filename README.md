@@ -10,7 +10,7 @@ A production-ready, enterprise-grade User Management System built with the MERN 
 | UI | Tailwind CSS 3 + Headless UI |
 | State | React Context API |
 | Backend | Node.js + Express |
-| Database | MongoDB + Mongoose |
+| Database | MySQL + Sequelize |
 | Auth | JWT (Access + Refresh Tokens) |
 | Icons | Lucide React |
 
@@ -23,7 +23,7 @@ PurpleMerit/
 │   │   ├── config/         # DB & env config
 │   │   ├── controllers/    # Request handlers
 │   │   ├── middlewares/     # Auth, RBAC, validation, errors
-│   │   ├── models/         # Mongoose schemas
+│   │   ├── models/         # Sequelize models
 │   │   ├── routes/         # Route definitions
 │   │   ├── services/       # Business logic
 │   │   ├── utils/          # Helpers
@@ -60,7 +60,7 @@ To show credentials directly on the hosted login page (useful for assessments), 
 
 ### Prerequisites
 - Node.js 18+
-- MongoDB (local or Atlas)
+- MySQL 8+ (local, Docker, or AWS RDS)
 
 ### 1. Backend
 
@@ -94,14 +94,19 @@ For hosted frontend, set `VITE_API_URL` to your deployed backend URL (for exampl
 
 - Frontend: **Vercel** (or Netlify)
 - Backend: **Render**
-- Database: **MongoDB Atlas**
+- Database: **AWS RDS (MySQL)**
 
 ### Backend on Render (`server/`)
 
 Set these environment variables:
 
 - `NODE_ENV=production`
-- `MONGODB_URI=<atlas-connection-string>`
+- `DB_HOST=<rds-endpoint>`
+- `DB_PORT=3306`
+- `DB_NAME=<database-name>`
+- `DB_USER=<database-user>`
+- `DB_PASSWORD=<database-password>`
+- `DB_SSL=true`
 - `JWT_ACCESS_SECRET=<long-random-secret>`
 - `JWT_REFRESH_SECRET=<long-random-secret>`
 - `JWT_ACCESS_EXPIRY=15m`

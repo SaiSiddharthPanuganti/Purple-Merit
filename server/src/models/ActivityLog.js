@@ -1,51 +1,65 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db');
 
-const activityLogSchema = new mongoose.Schema(
+const ActivityLog = sequelize.define(
+  'ActivityLog',
   {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
+      type: DataTypes.UUID,
+      allowNull: false,
     },
     action: {
-      type: String,
-      required: true,
-      enum: [
+      type: DataTypes.ENUM(
         'USER_LOGIN',
         'USER_LOGOUT',
         'USER_CREATED',
         'USER_UPDATED',
         'USER_DELETED',
         'PROFILE_UPDATED',
-        'PASSWORD_CHANGED',
-      ],
+        'PASSWORD_CHANGED'
+      ),
+      allowNull: false,
     },
     targetUser: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      default: null,
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
     },
     details: {
-      type: String,
-      default: '',
+      type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: '',
     },
     ipAddress: {
-      type: String,
-      default: null,
+      type: DataTypes.STRING(64),
+      allowNull: true,
+      defaultValue: null,
     },
     userAgent: {
-      type: String,
-      default: null,
+      type: DataTypes.STRING(512),
+      allowNull: true,
+      defaultValue: null,
     },
   },
   {
-    timestamps: true,
+    tableName: 'activity_logs',
+    underscored: true,
+    indexes: [
+      { fields: ['user', 'created_at'] },
+      { fields: ['action'] },
+    ],
   }
 );
 
-activityLogSchema.index({ user: 1, createdAt: -1 });
-activityLogSchema.index({ action: 1 });
-
-const ActivityLog = mongoose.model('ActivityLog', activityLogSchema);
+ActivityLog.prototype.toJSON = function () {
+  const obj = { ...this.get() };
+  obj._id = obj.id;
+  return obj;
+};
 
 module.exports = ActivityLog;

@@ -22,8 +22,8 @@ const getUserById = async (req, res, next) => {
 
 const createUser = async (req, res, next) => {
   try {
-    const user = await userService.createUser(req.body, req.user._id);
-    logActivity({ user: req.user, action: 'USER_CREATED', targetUser: user._id, details: `Created user ${user.email}`, req });
+    const user = await userService.createUser(req.body, req.user.id);
+    logActivity({ user: req.user, action: 'USER_CREATED', targetUser: user.id || user._id, details: `Created user ${user.email}`, req });
     sendResponse(res, 201, 'User created successfully', user);
   } catch (error) {
     next(error);
@@ -35,10 +35,10 @@ const updateUser = async (req, res, next) => {
     const user = await userService.updateUser(
       req.params.id,
       req.body,
-      req.user._id,
+      req.user.id,
       req.user
     );
-    logActivity({ user: req.user, action: 'USER_UPDATED', targetUser: user._id, details: `Updated user ${user.email}`, req });
+    logActivity({ user: req.user, action: 'USER_UPDATED', targetUser: user.id || user._id, details: `Updated user ${user.email}`, req });
     sendResponse(res, 200, 'User updated successfully', user);
   } catch (error) {
     next(error);
@@ -47,8 +47,8 @@ const updateUser = async (req, res, next) => {
 
 const deleteUser = async (req, res, next) => {
   try {
-    const user = await userService.deleteUser(req.params.id, req.user._id);
-    logActivity({ user: req.user, action: 'USER_DELETED', targetUser: user._id, details: `Deactivated user ${user.email}`, req });
+    const user = await userService.deleteUser(req.params.id, req.user.id);
+    logActivity({ user: req.user, action: 'USER_DELETED', targetUser: user.id || user._id, details: `Deactivated user ${user.email}`, req });
     sendResponse(res, 200, 'User deactivated successfully', user);
   } catch (error) {
     next(error);
@@ -57,7 +57,7 @@ const deleteUser = async (req, res, next) => {
 
 const getProfile = async (req, res, next) => {
   try {
-    const user = await userService.getProfile(req.user._id);
+    const user = await userService.getProfile(req.user.id);
     sendResponse(res, 200, 'Profile fetched successfully', user);
   } catch (error) {
     next(error);
@@ -66,7 +66,7 @@ const getProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
   try {
-    const user = await userService.updateProfile(req.user._id, req.body);
+    const user = await userService.updateProfile(req.user.id, req.body);
     const action = req.body.newPassword ? 'PASSWORD_CHANGED' : 'PROFILE_UPDATED';
     logActivity({ user: req.user, action, details: `Profile updated by ${req.user.email}`, req });
     sendResponse(res, 200, 'Profile updated successfully', user);

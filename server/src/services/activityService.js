@@ -1,9 +1,10 @@
 const ActivityLog = require('../models/ActivityLog');
+const User = require('../models/User');
 
 const logActivity = async ({ user, action, targetUser = null, details = '', req = null }) => {
   try {
     await ActivityLog.create({
-      user: user._id || user,
+      user: user.id || user._id || user,
       action,
       targetUser,
       details,
@@ -17,32 +18,50 @@ const logActivity = async ({ user, action, targetUser = null, details = '', req 
 
 const getActivityLogs = async (query) => {
   const { page = 1, limit = 20, action = '', userId = '' } = query;
-  const filter = {};
+  const where = {};
   const pageNumber = Number(page);
   const limitNumber = Number(limit);
 
-  if (action) filter.action = action;
-  if (userId) filter.user = userId;
+  if (action) where.action = action;
+  if (userId) where.user = userId;
 
   const skip = (pageNumber - 1) * limitNumber;
 
-  const [logs, total] = await Promise.all([
-    ActivityLog.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limitNumber)
-      .populate('user', 'firstName lastName email role')
-      .populate('targetUser', 'firstName lastName email'),
-    ActivityLog.countDocuments(filter),
-  ]);
+  const { rows, count } = await ActivityLog.findAndCountAll({
+    where,
+    order: [['createdAt', 'DESC']],
+    offset: skip,
+    limit: limitNumber,
+    include: [
+      {
+        model: User,
+        as: 'userDetails',
+        attributes: ['id', 'firstName', 'lastName', 'email', 'role'],
+      },
+      {
+        model: User,
+        as: 'targetUserDetails',
+        attributes: ['id', 'firstName', 'lastName', 'email'],
+      },
+    ],
+  });
+
+  const logs = rows.map((log) => {
+    const plain = log.toJSON();
+    plain.user = plain.userDetails || plain.user;
+    plain.targetUser = plain.targetUserDetails || plain.targetUser;
+    delete plain.userDetails;
+    delete plain.targetUserDetails;
+    return plain;
+  });
 
   return {
     logs,
     pagination: {
       page: pageNumber,
       limit: limitNumber,
-      total,
-      pages: Math.ceil(total / limitNumber),
+      total: count,
+      pages: Math.ceil(count / limitNumber),
     },
   };
 };

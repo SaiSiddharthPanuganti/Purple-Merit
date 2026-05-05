@@ -20,7 +20,7 @@ const authenticate = async (req, res, next) => {
     }
 
     const decoded = verifyAccessToken(token);
-    const user = await User.findById(decoded.id);
+    const user = await User.findByPk(decoded.id);
 
     if (!user) {
       throw new AppError('User no longer exists.', 401);

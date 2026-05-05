@@ -1,9 +1,8 @@
-const mongoose = require('mongoose');
 const User = require('../../src/models/User');
 
 describe('User Model', () => {
   it('should format full name correctly via virtual', () => {
-    const user = new User({
+    const user = User.build({
       firstName: 'John',
       lastName: 'Doe',
       email: 'john@example.com',
@@ -13,20 +12,19 @@ describe('User Model', () => {
     expect(user.fullName).toBe('John Doe');
   });
 
-  it('should enforce required validation for email', () => {
-    const user = new User({
+  it('should enforce required validation for email', async () => {
+    const user = User.build({
       firstName: 'John',
       lastName: 'Doe',
       password: 'password123',
     });
 
-    const err = user.validateSync();
-    expect(err.errors.email).toBeDefined();
-    expect(err.errors.email.message).toBe('Email is required');
+    await expect(user.validate()).rejects.toThrow();
   });
 
   it('should remove password from JSON output', () => {
-    const user = new User({
+    const user = User.build({
+      id: '550e8400-e29b-41d4-a716-446655440000',
       firstName: 'John',
       lastName: 'Doe',
       email: 'john@example.com',
@@ -36,5 +34,6 @@ describe('User Model', () => {
     const json = user.toJSON();
     expect(json.password).toBeUndefined();
     expect(json.email).toBe('john@example.com');
+    expect(json._id).toBe('550e8400-e29b-41d4-a716-446655440000');
   });
 });

@@ -9,7 +9,12 @@ services:
       - "5000:5000"
     environment:
       - PORT=5000
-      - MONGODB_URI=mongodb://mongo:27017/purplemerit
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=purplemerit
+      - DB_USER=purplemerit
+      - DB_PASSWORD=purplemerit
+      - DB_SSL=false
       - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
       - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
       - JWT_ACCESS_EXPIRY=15m
@@ -21,7 +26,7 @@ services:
       - SEED_ADMIN_PASSWORD=${SEED_ADMIN_PASSWORD:-}
       - SEED_SAMPLE_PASSWORD=${SEED_SAMPLE_PASSWORD:-}
     depends_on:
-      - mongo
+      - mysql
 
   client:
     build: ./client
@@ -32,14 +37,19 @@ services:
     depends_on:
       - server
 
-  mongo:
-    image: mongo:7
+  mysql:
+    image: mysql:8.4
     container_name: purplemerit-db
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=purplemerit
+      - MYSQL_USER=purplemerit
+      - MYSQL_PASSWORD=purplemerit
     volumes:
-      - mongo_data:/data/db
+      - mysql_data:/var/lib/mysql
 
 volumes:
-  mongo_data:
+  mysql_data:

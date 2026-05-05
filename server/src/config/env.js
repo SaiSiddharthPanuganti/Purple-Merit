@@ -8,7 +8,12 @@ const parseBoolean = (value, defaultValue = false) => {
 
 const env = {
   PORT: process.env.PORT || 5000,
-  MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/purplemerit',
+  DB_HOST: process.env.DB_HOST || 'localhost',
+  DB_PORT: Number(process.env.DB_PORT) || 3306,
+  DB_NAME: process.env.DB_NAME || 'purplemerit',
+  DB_USER: process.env.DB_USER || 'purplemerit',
+  DB_PASSWORD: process.env.DB_PASSWORD || 'purplemerit',
+  DB_SSL: parseBoolean(process.env.DB_SSL, false),
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
   JWT_ACCESS_EXPIRY: process.env.JWT_ACCESS_EXPIRY || '15m',

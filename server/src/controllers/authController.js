@@ -54,7 +54,7 @@ const refresh = async (req, res, next) => {
 const logout = async (req, res, next) => {
   try {
     if (req.user) {
-      await authService.logout(req.user._id);
+      await authService.logout(req.user.id);
       logActivity({ user: req.user, action: 'USER_LOGOUT', details: `${req.user.email} logged out`, req });
     }
     res.clearCookie('refreshToken', COOKIE_OPTIONS);

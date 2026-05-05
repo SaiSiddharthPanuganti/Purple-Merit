@@ -3,7 +3,7 @@ const env = require('../config/env');
 
 const seedAdmin = async () => {
   try {
-    const adminExists = await User.findOne({ email: env.SEED_ADMIN_EMAIL });
+    const adminExists = await User.findOne({ where: { email: env.SEED_ADMIN_EMAIL } });
     if (adminExists) {
       return;
     }
@@ -23,31 +23,29 @@ const seedAdmin = async () => {
 
     // Seed sample users for demo
     const sampleUsers = [
-      { firstName: 'Sarah', lastName: 'Johnson', email: 'sarah.johnson@purplemerit.com', password: samplePassword, role: 'manager', status: 'active', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'Michael', lastName: 'Chen', email: 'michael.chen@purplemerit.com', password: samplePassword, role: 'manager', status: 'active', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'Emily', lastName: 'Rodriguez', email: 'emily.rodriguez@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'James', lastName: 'Wilson', email: 'james.wilson@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'Aisha', lastName: 'Patel', email: 'aisha.patel@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'David', lastName: 'Kim', email: 'david.kim@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'Lisa', lastName: 'Thompson', email: 'lisa.thompson@purplemerit.com', password: samplePassword, role: 'user', status: 'inactive', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'Robert', lastName: 'Garcia', email: 'robert.garcia@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'Amanda', lastName: 'Lee', email: 'amanda.lee@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'Daniel', lastName: 'Martinez', email: 'daniel.martinez@purplemerit.com', password: samplePassword, role: 'manager', status: 'active', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'Jessica', lastName: 'Brown', email: 'jessica.brown@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'Kevin', lastName: 'Taylor', email: 'kevin.taylor@purplemerit.com', password: samplePassword, role: 'user', status: 'inactive', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'Rachel', lastName: 'Anderson', email: 'rachel.anderson@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'Christopher', lastName: 'Thomas', email: 'chris.thomas@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin._id, updatedBy: admin._id },
-      { firstName: 'Jennifer', lastName: 'White', email: 'jennifer.white@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin._id, updatedBy: admin._id },
+      { firstName: 'Sarah', lastName: 'Johnson', email: 'sarah.johnson@purplemerit.com', password: samplePassword, role: 'manager', status: 'active', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'Michael', lastName: 'Chen', email: 'michael.chen@purplemerit.com', password: samplePassword, role: 'manager', status: 'active', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'Emily', lastName: 'Rodriguez', email: 'emily.rodriguez@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'James', lastName: 'Wilson', email: 'james.wilson@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'Aisha', lastName: 'Patel', email: 'aisha.patel@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'David', lastName: 'Kim', email: 'david.kim@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'Lisa', lastName: 'Thompson', email: 'lisa.thompson@purplemerit.com', password: samplePassword, role: 'user', status: 'inactive', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'Robert', lastName: 'Garcia', email: 'robert.garcia@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'Amanda', lastName: 'Lee', email: 'amanda.lee@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'Daniel', lastName: 'Martinez', email: 'daniel.martinez@purplemerit.com', password: samplePassword, role: 'manager', status: 'active', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'Jessica', lastName: 'Brown', email: 'jessica.brown@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'Kevin', lastName: 'Taylor', email: 'kevin.taylor@purplemerit.com', password: samplePassword, role: 'user', status: 'inactive', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'Rachel', lastName: 'Anderson', email: 'rachel.anderson@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'Christopher', lastName: 'Thomas', email: 'chris.thomas@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin.id, updatedBy: admin.id },
+      { firstName: 'Jennifer', lastName: 'White', email: 'jennifer.white@purplemerit.com', password: samplePassword, role: 'user', status: 'active', createdBy: admin.id, updatedBy: admin.id },
     ];
 
-    for (const userData of sampleUsers) {
-      await User.create(userData);
-    }
+    await User.bulkCreate(sampleUsers);
 
     console.log(`✅ ${sampleUsers.length} sample users seeded`);
   } catch (error) {
-    // If it's a duplicate key error, users already exist — that's fine
-    if (error.code !== 11000) {
+    // Duplicate records can happen if seed has already been applied.
+    if (error.name !== 'SequelizeUniqueConstraintError' && error.code !== 11000) {
       console.error('⚠️  Seed error:', error.message);
     }
   }

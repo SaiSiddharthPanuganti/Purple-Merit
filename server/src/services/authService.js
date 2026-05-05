@@ -14,7 +14,8 @@ const compareTokenHash = (storedHash, token) => {
 };
 
 const login = async (email, password) => {
-  const user = await User.findOne({ email }).select('+password');
+  const normalizedEmail = String(email).trim().toLowerCase();
+  const user = await User.scope('withSecrets').findOne({ where: { email: normalizedEmail } });
 
   if (!user) {
     throw new AppError('Invalid email or password.', 401);
@@ -35,7 +36,7 @@ const login = async (email, password) => {
   // Save refresh token hash and update last login
   user.refreshTokenHash = hashToken(refreshToken);
   user.lastLogin = new Date();
-  await user.save({ validateBeforeSave: false });
+  await user.save({ hooks: false });
 
   return { user, accessToken, refreshToken };
 };
@@ -44,7 +45,7 @@ const refreshAccessToken = async (refreshToken) => {
   const { verifyRefreshToken } = require('../utils/token');
 
   const decoded = verifyRefreshToken(refreshToken);
-  const user = await User.findById(decoded.id).select('+refreshTokenHash');
+  const user = await User.scope('withSecrets').findByPk(decoded.id);
 
   if (!user || !compareTokenHash(user.refreshTokenHash, refreshToken)) {
     throw new AppError('Invalid refresh token.', 401);
@@ -58,13 +59,13 @@ const refreshAccessToken = async (refreshToken) => {
   const newRefreshToken = generateRefreshToken(user);
 
   user.refreshTokenHash = hashToken(newRefreshToken);
-  await user.save({ validateBeforeSave: false });
+  await user.save({ hooks: false });
 
   return { user, accessToken: newAccessToken, refreshToken: newRefreshToken };
 };
 
 const logout = async (userId) => {
-  await User.findByIdAndUpdate(userId, { refreshTokenHash: null });
+  await User.update({ refreshTokenHash: null }, { where: { id: userId } });
 };
 
 module.exports = { login, refreshAccessToken, logout };

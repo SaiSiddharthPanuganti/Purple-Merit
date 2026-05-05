@@ -4,22 +4,24 @@ const errorHandler = (err, req, res, next) => {
   let statusCode = err.statusCode || 500;
   let message = err.message || 'Internal Server Error';
 
-  // Mongoose duplicate key error
-  if (err.code === 11000) {
+  // Duplicate key error (Sequelize/MySQL or Mongo legacy compatibility)
+  if (err.name === 'SequelizeUniqueConstraintError' || err.code === 11000) {
     statusCode = 409;
-    const field = Object.keys(err.keyValue)[0];
+    const field = err.errors?.[0]?.path || Object.keys(err.keyValue || {})[0] || 'field';
     message = `A user with this ${field} already exists.`;
   }
 
-  // Mongoose validation error
-  if (err.name === 'ValidationError') {
+  // Validation error
+  if (err.name === 'ValidationError' || err.name === 'SequelizeValidationError') {
     statusCode = 400;
-    const errors = Object.values(err.errors).map((e) => e.message);
+    const errors = Array.isArray(err.errors)
+      ? err.errors.map((e) => e.message)
+      : Object.values(err.errors || {}).map((e) => e.message);
     message = errors.join('. ');
   }
 
-  // Mongoose cast error (invalid ObjectId)
-  if (err.name === 'CastError') {
+  // Invalid id/foreign key format
+  if (err.name === 'CastError' || err.name === 'SequelizeForeignKeyConstraintError') {
     statusCode = 400;
     message = 'Invalid ID format.';
   }

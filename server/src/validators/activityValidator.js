@@ -16,7 +16,7 @@ const activityQuerySchema = z.object({
     ])
     .optional()
     .default(''),
-  userId: z.string().optional().default(''),
+  userId: z.union([z.string().uuid(), z.literal('')]).optional().default(''),
 });
 
 module.exports = { activityQuerySchema };
